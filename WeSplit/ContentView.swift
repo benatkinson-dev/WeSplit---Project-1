@@ -8,47 +8,57 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var tapCount = 0
-    @State private var name = ""
-    let students = ["Harry","Hermione","Ron"]
-    @State private var selectedStudent = "Harry"
+    @State private var checkAmount = 0.0
+    @State private var numberOfPeople = 2
+    @State private var tipPercentage = 20
+    
+    let tipPercentages = [5,10,15,20,0]
+    
     var body: some View {
         NavigationView{
             
             Form {
                 Section{
-                    Picker("Select your student", selection: $selectedStudent){
-                        ForEach(students, id:\.self){
-                            Text($0)
+                    TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.currencyCode ?? "GBP"))
+                        .keyboardType(.decimalPad)
+                    
+                    Picker("Number of people", selection: $numberOfPeople) {
+                        ForEach(2 ..< 100) {
+                            Text("\($0) people")
                         }
                     }
-                }
-                Section{
-                    TextField("Enter your name", text: $name)
-                    Text("Your name is \(name) and you selected \(selectedStudent)")
-                }
-                Section{
-                    Button("Tap count is: \(tapCount)"){
-                        tapCount += 1
-                    }
-                }
-                Section{
-                    Group{
-                        Text("Hello world!")
-                        Text ("This is my first app :)")
-                        Text("Here's to many, many,more!")
-                    }
-                    
+                } header: {
+                    Text("Bill amount and how many people?")
                 }
                 
-            }.navigationTitle("My First App")
-                .navigationBarTitleDisplayMode(.inline)
+                Section{
+                    Picker("Tip percentage", selection: $tipPercentage){
+                        ForEach(tipPercentages, id: \.self){
+                        Text($0, format: .percent)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("How much tip do you want to leave?")
+                }
+                
+                Section{
+                    Text(checkAmount, format: .currency(code: Locale.current.currencyCode ?? "GBP"))
+                }
+            }
+            .navigationTitle("WeSplit app")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
+    
 }
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        Group {
+            ContentView()
+        }
     }
 }
